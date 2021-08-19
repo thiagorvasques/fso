@@ -1,0 +1,24 @@
+brownser > server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+server > brownser: Server redirect to /note for a new GET request
+brownser > server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server > brownser: HTML-code
+
+note over brownser:
+browser reads html code that requires main.css, main.js, data.json and favicon.icon
+end note
+
+brownser > server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server > brownser: main.css
+brownser > server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server > brownser: main.js
+brownser > server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server > brownser_ data.json
+brownser > server: HTTP GET https://studies.cs.helsinki.fi/favicon.ico
+server > brownser: favicon.ico
+
+note over browser:
+brownser execute the eventhandler and display the informantion
+which was updated by POST
+
+
+

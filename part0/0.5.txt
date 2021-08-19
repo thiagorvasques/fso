@@ -1,0 +1,19 @@
+brownser > server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/spa
+server > brownser: HTML-code
+brownser > server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server > brownser: main.css
+browser > server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server > browser:  spa.js
+
+note over brownser:
+browser executes eventhandler that
+asks for data.json
+end note
+
+brownser > sever: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/data.json
+server > brownser: data.json
+brownser > server: HTTP GET https://studies.cs.helsinki.fi/favicon.ico
+server > brownser: favicon.ico
+
+note over brownser:
+browser renders the data.
