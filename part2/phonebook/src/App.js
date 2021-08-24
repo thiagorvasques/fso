@@ -3,6 +3,7 @@ import Form from "./Form";
 import Filter from "./Filter";
 import Numbers from "./Numbers";
 import services from "./services/persons";
+import Notification from "./Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [nameSearch, setNameSearch] = useState("");
   const [results, setResults] = useState([]);
+  const [message, setmessage] = useState("");
 
   useEffect(() => {
     services.getAll().then((response) => {
@@ -30,7 +32,7 @@ const App = () => {
       (person) =>
         person.name.toLowerCase().trim() === newName.toLowerCase().trim()
     );
-    //console.log(inArray);
+    console.log(inArray);
     if (inArray.length >= 1) {
       const confirm = window.confirm(
         `${newName} is already added to phonebook, replace the old number with a new one?`
@@ -57,26 +59,37 @@ const App = () => {
   };
 
   const deletePerson = (id, index) => {
-    if (window.confirm(`Delete ${persons[index].name}`)) {
+    if (window.confirm(`Delete ${persons[index].name}?`)) {
       services
         .deletePerson(id)
         .then((response) => {
           console.log(response);
           setPersons(persons.filter((person) => id !== person.id));
+          setmessage(`${persons[index].name} was deleted.`);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setmessage(`${persons[index].name} was already deleted`);
+        });
     }
   };
 
   const updatePerson = (arr, updated) => {
-    services.update(arr[0].id, updated).then((response) => {
-      //console.log(response);
-      setPersons(
-        persons.map((person) => (person.id !== arr[0].id ? person : updated))
-      );
-      setNewName("");
-      setNewNumber("");
-    });
+    services
+      .update(arr[0].id, updated)
+      .then((response) => {
+        //console.log(response);
+        setPersons(
+          persons.map((person) => (person.id !== arr[0].id ? person : updated))
+        );
+        setNewName("");
+        setNewNumber("");
+        setmessage(`${updated.name}´s number updated`);
+      })
+      .catch((err) => {
+        console.log(err);
+        setmessage(`information of ${updated.name} has already been removed`);
+      });
   };
 
   const createNewPerson = (newPerson) => {
@@ -85,11 +98,17 @@ const App = () => {
       .then((response) => setPersons(persons.concat(response.data)));
     setNewName("");
     setNewNumber("");
+    setmessage(`${newName} added to list`);
+  };
+
+  const deleteMessage = () => {
+    setmessage("");
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification deleteMessage={deleteMessage} message={message} />
       <Filter searchName={searchName} />
       <Form
         handleNewName={handleNewName}

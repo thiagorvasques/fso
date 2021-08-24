@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Ada Lovelace",
-      "number": "555555555555",
+      "number": "45454545",
       "id": 2
     },
     {
@@ -16,14 +16,9 @@
       "id": 4
     },
     {
-      "name": "maiza",
-      "number": "33333333333333",
-      "id": 6
-    },
-    {
-      "name": "Thiago",
-      "number": "351 8888 2525",
-      "id": 8
+      "name": "thiago",
+      "number": "2523336",
+      "id": 5
     }
   ]
 }
