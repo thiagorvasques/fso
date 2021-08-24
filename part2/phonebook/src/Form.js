@@ -2,7 +2,7 @@ import React from "react";
 
 function Form(props) {
   return (
-    <form onSubmit={(e) => props.handleNewPerson(e)}>
+    <form>
       <h2>Add New</h2>
       <div>
         name:
@@ -23,7 +23,9 @@ function Form(props) {
         />
       </div>
       <div>
-        <button type="submit">add</button>
+        <button type="submit" onClick={(e) => props.handleNewPerson(e)}>
+          add
+        </button>
       </div>
     </form>
   );

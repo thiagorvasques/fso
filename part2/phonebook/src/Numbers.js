@@ -1,11 +1,11 @@
 import React from "react";
 
-function Numbers(props) {
+function Numbers({ nameSearch, persons, results, deletePerson }) {
   return (
     <div>
       <h2>Numbers</h2>
-      {props.nameSearch.length > 0
-        ? props.results.map((person) => {
+      {nameSearch.length > 0
+        ? results.map((person) => {
             console.log(person);
             return (
               <div key={person.name}>
@@ -13,10 +13,16 @@ function Numbers(props) {
               </div>
             );
           })
-        : props.persons.map((person) => {
+        : persons.map((person, index) => {
             return (
               <div key={person.name}>
-                {person.name}: {person.number}
+                {person.name}: {person.number}{" "}
+                <button
+                  type="button"
+                  onClick={() => deletePerson(person.id, index)}
+                >
+                  Delete
+                </button>
               </div>
             );
           })}

@@ -1,13 +1,8 @@
 {
-  "persons":[
-    {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
-    },
+  "persons": [
     {
       "name": "Ada Lovelace",
-      "number": "39-44-5323523",
+      "number": "555555555555",
       "id": 2
     },
     {
@@ -19,6 +14,16 @@
       "name": "Mary Pops",
       "number": "39-23-6423122",
       "id": 4
+    },
+    {
+      "name": "maiza",
+      "number": "33333333333333",
+      "id": 6
+    },
+    {
+      "name": "Thiago",
+      "number": "351 8888 2525",
+      "id": 8
     }
   ]
 }
