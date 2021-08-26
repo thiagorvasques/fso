@@ -1,25 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const mongoose = require("mongoose");
-
-// atlas db url
-const password = "10desetembrode1983";
-const url = `mongodb+srv://thiagovasques:${password}@phonebook-app.xxk80.mongodb.net/phonebook-app?retryWrites=true&w=majority`;
-
-// mongoose connection
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-
-// Set new Schema
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-});
-
-// Set new model
-const Person = mongoose.model("Person", personSchema);
+const Person = require("./models/persons");
 
 // Set express
 const app = express();
@@ -93,12 +76,8 @@ app.get("/", (req, res) => {
 
 // api route
 app.get("/api/persons", (req, res) => {
-  db.once("open", function () {
-    console.log("onnected");
-    Person.find(function (err, result) {
-      if (err) return console.log(err);
-      res.send(result);
-    });
+  Person.find({}).then((persons) => {
+    res.json(persons);
   });
 });
 
@@ -154,7 +133,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server ruuning at port ${PORT}`);
 });
