@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 // atlas db url
 const password = "10desetembrode1983";
-//const url = `mongodb+srv://thiagovasques:${password}@phonebook-app.xxk80.mongodb.net/phonebook-app?retryWrites=true&w=majority`;
+//const url = `mongodb+srv://thiagovasques:${password}@phonebook-app.xxk80.mongodb.net/phonebook-app?retryWrites=true&w=majority`
 const url = process.env.MONGODB_URI;
-console.log("connecting to", url);
+console.log("connected to", url);
 
 // mongoose connection
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });

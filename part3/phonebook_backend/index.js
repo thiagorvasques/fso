@@ -91,13 +91,9 @@ app.get("/info", (req, res) => {
 // person by id route
 app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
+  Person.findById(req.params.id).then((person) => {
     res.json(person);
-  } else {
-    res.status(404).end();
-  }
+  });
 });
 // delete route
 app.delete("/api/persons/:id", (req, res) => {
@@ -109,21 +105,20 @@ app.delete("/api/persons/:id", (req, res) => {
 
 // create person route
 app.post("/api/persons", (req, res) => {
-  const id = Math.floor(Math.random() * 10000);
-  const person = req.body;
-  person.id = id;
-  console.log(person, id);
-  const found =
-    persons.find((person) => req.body.name === person.name) !== undefined;
-  console.log(found);
-  if (!req.body.name || !req.body.number || found) {
-    res
-      .status(404)
-      .json({ error: "name already exists or name, number not inserted" });
-  } else {
-    persons.concat(person);
-    res.json(person);
+  const body = req.body;
+  console.log(body, "body if request");
+  if (body.name === undefined || body.number === undefined) {
+    return res.status(404).json({ error: "Content missing" });
   }
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+
+  person.save().then((savedPerson) => {
+    console.log(savedPerson);
+    res.json(savedPerson);
+  });
 });
 
 //handle request to unknown url
