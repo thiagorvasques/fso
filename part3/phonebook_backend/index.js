@@ -8,10 +8,22 @@ const Person = require("./models/persons");
 const app = express();
 
 //Solve cross-origin resource sharing error
+app.use(express.static("build"));
+app.use(express.json());
 app.use(cors());
+//logger create manually
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method);
+  console.log("Path:  ", request.path);
+  console.log("Body:  ", request.body);
+  console.log("---");
+  next();
+};
+
+// use logger
+app.use(requestLogger);
 
 //create morgan token to display body request
-app.use(express.json());
 morgan.token("data", (req, res) => {
   return JSON.stringify(req.body);
 });
@@ -30,50 +42,6 @@ app.use(
   })
 );
 
-// use static folder from react build
-app.use(express.static("build"));
-
-// logget create manually
-const requestLogger = (request, response, next) => {
-  console.log("Method:", request.method);
-  console.log("Path:  ", request.path);
-  console.log("Body:  ", request.body);
-  console.log("---");
-  next();
-};
-
-// use logger
-app.use(requestLogger);
-
-// hardcoded data
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
-// index route
-app.get("/", (req, res) => {
-  res.send("<h1>Hello World</h1>");
-});
-
 // api route
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((persons) => {
@@ -82,31 +50,41 @@ app.get("/api/persons", (req, res) => {
 });
 
 // info route
-app.get("/info", (req, res) => {
-  date = new Date().toString();
-  res.send(`<p>Phonebook has info for ${persons.length} people</p>
-                <p>${date}</p>`);
+app.get("/info", (req, res, next) => {
+  Person.countDocuments({})
+    .then((count) => {
+      res.json(count);
+    })
+    .catch((error) => next(error));
 });
 
 // person by id route
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const id = Number(req.params.id);
-  Person.findById(req.params.id).then((person) => {
-    res.json(person);
-  });
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 // delete route
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  person = persons.filter((person) => person.id !== id);
-
-  res.status(204).end();
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then((result) => {
+      //console.log(result);
+      res.status(204).end();
+    })
+    .catch((error) => next(console.error()));
 });
 
 // create person route
 app.post("/api/persons", (req, res) => {
   const body = req.body;
-  console.log(body, "body if request");
+  //console.log(body, "body if request");
   if (body.name === undefined || body.number === undefined) {
     return res.status(404).json({ error: "Content missing" });
   }
@@ -116,9 +94,22 @@ app.post("/api/persons", (req, res) => {
   });
 
   person.save().then((savedPerson) => {
-    console.log(savedPerson);
+    //console.log(savedPerson);
     res.json(savedPerson);
   });
+});
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const body = req.body;
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updated) => {
+      res.json(updated);
+    })
+    .catch((error) => next(error));
 });
 
 //handle request to unknown url
@@ -127,6 +118,19 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// this has to be the last loaded middleware.
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

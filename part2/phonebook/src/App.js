@@ -15,6 +15,7 @@ const App = () => {
 
   useEffect(() => {
     services.getAll().then((response) => {
+      console.log(response);
       setPersons(response.data);
     });
   }, []);
@@ -64,7 +65,12 @@ const App = () => {
         .deletePerson(id)
         .then((response) => {
           console.log(response);
-          setPersons(persons.filter((person) => id !== person.id));
+          setPersons(
+            persons.filter((person) => {
+              console.log(person.id, typeof person.id, id, typeof id);
+              return id !== person.id;
+            })
+          );
           setmessage(`${persons[index].name} was deleted.`);
         })
         .catch((err) => {
