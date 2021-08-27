@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var uniqueValidator = require("mongoose-unique-validator");
 
 // atlas db url
 const password = "10desetembrode1983";
@@ -14,9 +15,17 @@ db.on("error", console.error.bind(console, "connection error:"));
 
 // Set new Schema
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    uniqueCaseInsensitive: true,
+    minlength: 3,
+  },
+  number: { type: String, minlength: 8 },
 });
+
+personSchema.plugin(uniqueValidator);
 // set toJSON method to return id as string and remove __v
 personSchema.set("toJSON", {
   transform: (document, returnedObject) => {
