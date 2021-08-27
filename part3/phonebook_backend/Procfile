@@ -1,1 +1,2 @@
 web: npm start
+#heroku config:set MONGODB_URI='mongodb+srv://thiagovasques:10desetembrode1983@phonebook-app.xxk80.mongodb.net/phonebook-app?retryWrites=true&w=majority'
