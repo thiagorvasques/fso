@@ -140,6 +140,7 @@ const errorHandler = (error, req, res, next) => {
 // this has to be the last loaded middleware.
 app.use(errorHandler);
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server ruuning at port ${PORT}`);

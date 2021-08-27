@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 var uniqueValidator = require("mongoose-unique-validator");
 
 // atlas db url
-const password = "10desetembrode1983";
-//const url = `mongodb+srv://thiagovasques:${password}@phonebook-app.xxk80.mongodb.net/phonebook-app?retryWrites=true&w=majority`
+
 const url = process.env.MONGODB_URI;
 console.log("connected to", url);
 
