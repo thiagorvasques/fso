@@ -24,7 +24,7 @@ const requestLogger = (request, response, next) => {
 app.use(requestLogger);
 
 //create morgan token to display body request
-morgan.token("data", (req, res) => {
+morgan.token("data", (req) => {
   return JSON.stringify(req.body);
 });
 
@@ -60,7 +60,6 @@ app.get("/info", (req, res, next) => {
 
 // person by id route
 app.get("/api/persons/:id", (req, res, next) => {
-  const id = Number(req.params.id);
   Person.findById(req.params.id)
     .then((person) => {
       if (person) {
@@ -74,7 +73,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 // delete route
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then((result) => {
+    .then(() => {
       //console.log(result);
       res.status(204).end();
     })
