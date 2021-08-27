@@ -11,7 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [nameSearch, setNameSearch] = useState("");
   const [results, setResults] = useState([]);
-  const [message, setmessage] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     services.getAll().then((response) => {
@@ -71,11 +71,11 @@ const App = () => {
               return id !== person.id;
             })
           );
-          setmessage(`${persons[index].name} was deleted.`);
+          setMessage(`${persons[index].name} was deleted.`);
         })
         .catch((err) => {
           console.log(err);
-          setmessage(`${persons[index].name} was already deleted`);
+          setMessage(`${persons[index].name} was already deleted`);
         });
     }
   };
@@ -90,25 +90,29 @@ const App = () => {
         );
         setNewName("");
         setNewNumber("");
-        setmessage(`${updated.name}´s number updated`);
+        setMessage(`${updated.name}´s number updated`);
       })
       .catch((err) => {
         console.log(err);
-        setmessage(`information of ${updated.name} has already been removed`);
+        setMessage(`information of ${updated.name} has already been removed`);
       });
   };
 
   const createNewPerson = (newPerson) => {
     services
       .create(newPerson)
-      .then((response) => setPersons(persons.concat(response.data)));
+      .then((response) => setPersons(persons.concat(response.data)))
+      .catch((err) => {
+        console.log(err.response.data.error);
+        setMessage(err.response.data.error);
+      });
     setNewName("");
     setNewNumber("");
-    setmessage(`${newName} added to list`);
+    setMessage(`${newName} added to list`);
   };
 
   const deleteMessage = () => {
-    setmessage("");
+    setMessage("");
   };
 
   return (
