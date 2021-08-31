@@ -1,0 +1,10 @@
+put http://localhost:3003/api/blogs/612c9fea6c6af0ae718cf81f
+content-type: application/json
+
+{
+  "title": "Full Stack Open",
+  "author": "University Helsinki",
+  "url": "https://fullstackopen.com/en/",
+  "likes": 11,
+  "id": "612c9fea6c6af0ae718cf81f"
+}
