@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs/
 content-type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiI2MTJmN2E5M2M5MDhlNGZmMmI0MmI2YzMiLCJpYXQiOjE2MzA1MDE1OTQsImV4cCI6MTYzMDUxOTU5NH0.7bnNIO3laoOSPBeQxsE4W7iVvyCJyXP-c_P3RWYeHhM
 
  {
-      "title": "Something to delete",
-      "author": "Thiago Vasqes",
-      "url":"http://blog.ypeWars.html",
-      "likes": 1
-}
+      "title": "admin blog",
+      "author": "admin",
+      "url":"admin.com",
+      "likes": 10
+ }
