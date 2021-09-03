@@ -5,14 +5,14 @@ import loginService from "./services/login";
 import blogService from "./services/blogService";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
-
+import BlogsList from "./components/BlogsList";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
-  const [newBlog, setNewBlog] = useState({});
+  // const [newBlog, setNewBlog] = useState({});
   const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
@@ -66,35 +66,35 @@ const App = () => {
     }
   };
 
-  const handleNewBlog = (e) => {
-    e.preventDefault();
-    console.log(e.target.name);
-    setNewBlog({
-      ...newBlog,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // const handleNewBlog = (e) => {
+  //   e.preventDefault();
+  //   console.log(e.target.name);
+  //   setNewBlog({
+  //     ...newBlog,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
 
-  const saveNewBlog = async (e) => {
-    e.preventDefault();
-    try {
-      await blogService.createBlog(newBlog);
-      setBlogs(await blogService.getAll());
-      setMessage(`A new blog ${newBlog.title} by ${newBlog.author}`);
-      setShowNotification(true);
-      setTimeout(() => {
-        setMessage("");
-        setShowNotification(false);
-      }, 3000);
-    } catch (error) {
-      setMessage("Content missing");
-      setShowNotification(true);
-      setTimeout(() => {
-        setMessage("");
-        setShowNotification(false);
-      }, 3000);
-    }
-  };
+  // const saveNewBlog = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await blogService.createBlog(newBlog);
+  //     setBlogs(await blogService.getAll());
+  //     setMessage(`A new blog ${newBlog.title} by ${newBlog.author}`);
+  //     setShowNotification(true);
+  //     setTimeout(() => {
+  //       setMessage("");
+  //       setShowNotification(false);
+  //     }, 3000);
+  //   } catch (error) {
+  //     setMessage("Content missing");
+  //     setShowNotification(true);
+  //     setTimeout(() => {
+  //       setMessage("");
+  //       setShowNotification(false);
+  //     }, 3000);
+  //   }
+  // };
 
   const updateLike = async (e, title, author, url, likes, id) => {
     //console.log(e, title, author, url, likes, typeof id);
@@ -163,8 +163,11 @@ const App = () => {
           <Blog user={user} logout={logout} />
           {showNotification ? <Notification message={message} /> : null}
           <BlogForm
-            handleNewBlog={handleNewBlog}
-            saveNewBlog={saveNewBlog}
+            setBlogs={setBlogs}
+            setMessage={setMessage}
+            setShowNotification={setShowNotification}
+          />
+          <BlogsList
             setBlogs={setBlogs}
             blogs={blogs}
             updateLike={updateLike}

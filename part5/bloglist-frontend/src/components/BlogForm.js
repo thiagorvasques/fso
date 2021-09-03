@@ -1,36 +1,55 @@
-import React from "react";
-import BlogsList from "./BlogsList";
+import React, { useState } from "react";
 import Togglable from "./Toggable";
+import blogService from "../services/blogService";
+import PropTypes from "prop-types";
 
-function BlogForm({
-  handleNewBlog,
-  saveNewBlog,
-  setBlogs,
-  blogs,
-  updateLike,
-  deleteBlog,
-  user,
-}) {
+function BlogForm({ setBlogs, setMessage, setShowNotification }) {
+  const [newBlog, setNewBlog] = useState({});
+  const handleNewBlog = (e) => {
+    e.preventDefault();
+    console.log(e.target.name);
+    setNewBlog({
+      ...newBlog,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const saveNewBlog = async (e) => {
+    e.preventDefault();
+    try {
+      await blogService.createBlog(newBlog);
+      setBlogs(await blogService.getAll());
+      setMessage(`A new blog ${newBlog.title} by ${newBlog.author}`);
+      setShowNotification(true);
+      setTimeout(() => {
+        setMessage("");
+        setShowNotification(false);
+      }, 3000);
+    } catch (error) {
+      setMessage("Content missing");
+      setShowNotification(true);
+      setTimeout(() => {
+        setMessage("");
+        setShowNotification(false);
+      }, 3000);
+    }
+  };
+  BlogForm.propTypes = {
+    setBlogs: PropTypes.func.isRequired,
+    setMessage: PropTypes.func.isRequired,
+    setShowNotification: PropTypes.func.isRequired,
+  };
   return (
     <div>
       <Togglable buttonLabel="Create new blog">
-        <form onChange={(e) => handleNewBlog(e)}>
-          <input type="text" name="title" />
-          <input type="text" name="author" />
-          <input type="text" name="url" />
-          <button type="submit" onClick={(e) => saveNewBlog(e)}>
+        <form onChange={handleNewBlog}>
+          <input type="text" name="title" placeholder="Title" />
+          <input type="text" name="author" placeholder="Author" />
+          <input type="text" name="url" placeholder="URL" />
+          <button type="submit" onClick={saveNewBlog}>
             save
           </button>
         </form>
       </Togglable>
-
-      <BlogsList
-        setBlogs={setBlogs}
-        blogs={blogs}
-        updateLike={updateLike}
-        deleteBlog={deleteBlog}
-        user={user}
-      />
     </div>
   );
 }

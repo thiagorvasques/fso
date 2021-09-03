@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 
-function BlogsList({ setBlogs, blogs, updateLike, deleteBlog, user }) {
+function BlogsList({ blogs, updateLike, deleteBlog, user }) {
   const refs = useMemo(
     () => Array.from({ length: blogs.length }).map(() => React.createRef()),
     [blogs.length]
