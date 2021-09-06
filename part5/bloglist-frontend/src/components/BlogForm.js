@@ -39,10 +39,10 @@ function BlogForm({ setBlogs, setMessage, setShowNotification }) {
     setShowNotification: PropTypes.func.isRequired,
   };
   return (
-    <div>
+    <div className="formDiv">
       <Togglable buttonLabel="Create new blog">
         <form onChange={handleNewBlog}>
-          <input type="text" name="title" placeholder="Title" />
+          <input type="text" name="title" placeholder="Title" id="title" />
           <input type="text" name="author" placeholder="Author" />
           <input type="text" name="url" placeholder="URL" />
           <button type="submit" onClick={saveNewBlog}>

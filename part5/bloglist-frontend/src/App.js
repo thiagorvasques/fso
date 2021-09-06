@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Blog from "./components/Blog";
+import Logged from "./components/Logged";
 import LoginForm from "./components/LoginForm";
 import loginService from "./services/login";
 import blogService from "./services/blogService";
@@ -160,7 +160,7 @@ const App = () => {
         </div>
       ) : (
         <div>
-          <Blog user={user} logout={logout} />
+          <Logged user={user} logout={logout} />
           {showNotification ? <Notification message={message} /> : null}
           <BlogForm
             setBlogs={setBlogs}
