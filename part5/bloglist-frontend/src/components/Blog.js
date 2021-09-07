@@ -6,12 +6,12 @@ function Blog({ blog, updateLike, deleteBlog, user }) {
   return (
     <li className="blog">
       <div className="d-flex flex-column">
-        <div className="content">
+        <div className="content" id={blog.id}>
           <h3>{blog.title}</h3>
           <p>{blog.author}</p>
           <Togglable buttonLabel={"View"}>
             <p>{blog.url}</p>
-            <p>{blog.likes}</p>
+            <p id="likes">{blog.likes}</p>
             <button
               onClick={(e) =>
                 updateLike(

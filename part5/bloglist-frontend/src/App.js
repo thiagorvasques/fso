@@ -24,16 +24,16 @@ const App = () => {
     }
   }, []);
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      console.log(blogs);
-      setBlogs(
-        blogs.sort((a, b) =>
-          a.likes > b.likes ? -1 : b.likes > a.likes ? 1 : 0
-        )
-      );
-    });
-  }, []);
+  // useEffect(() => {
+  //   blogService.getAll().then((blogs) => {
+  //     console.log(blogs);
+  //     setBlogs(
+  //       blogs.sort((a, b) =>
+  //         a.likes > b.likes ? -1 : b.likes > a.likes ? 1 : 0
+  //       )
+  //     );
+  //   });
+  // }, []);
 
   const logout = () => {
     window.localStorage.clear();
@@ -131,10 +131,11 @@ const App = () => {
 
   const deleteBlog = async (e, id, title, author) => {
     console.log("delete Blog", id);
-    const response = await blogService.deleteBlog(id);
+    e.preventDefault();
     const confirm = window.confirm(`Remove blog ${title} by ${author}`);
-    console.log(response);
     if (confirm) {
+      const response = await blogService.deleteBlog(id);
+      console.log(response);
       setBlogs(
         blogs.filter((blog) => {
           return blog.id !== id;

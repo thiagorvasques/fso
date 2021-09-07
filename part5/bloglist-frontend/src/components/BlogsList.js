@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Blog from "./Blog";
 import "./styles/blog.css";
+import blogService from "../services/blogService";
 
-function BlogsList({ blogs, updateLike, deleteBlog, user }) {
+function BlogsList({ blogs, updateLike, deleteBlog, user, setBlogs }) {
+  useEffect(() => {
+    blogService.getAll().then((blogs) => {
+      console.log(blogs);
+      setBlogs(
+        blogs.sort((a, b) =>
+          a.likes > b.likes ? -1 : b.likes > a.likes ? 1 : 0
+        )
+      );
+    });
+  }, []);
   return (
     <div>
       <div>
