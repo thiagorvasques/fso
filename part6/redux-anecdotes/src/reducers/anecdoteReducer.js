@@ -14,22 +14,40 @@
 //   votes: 0,
 // };
 // };
+import anecdoteService from "../services/anecdote";
 
 export const getId = () => (100000 * Math.random()).toFixed(0);
 
-export const voteAction = (id) => {
-  return { type: "INCREMENT", data: id };
-};
-
-export const addAction = (anecdote) => {
-  return {
-    type: "ADD",
-    data: anecdote,
+export const voteAction = (anecdote) => {
+  console.log(anecdote);
+  return async (dispatch) => {
+    const voted = {
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    };
+    await anecdoteService.vote(voted);
+    dispatch({ type: "INCREMENT", data: anecdote.id });
   };
 };
 
-export const initAction = (anecdotes) => {
-  return { type: "INIT_ANECDOTE", data: anecdotes };
+export const addAction = (anecdote) => {
+  return async (dispatch) => {
+    const newAnecdote = await anecdoteService.createAnecdote(anecdote);
+    dispatch({
+      type: "ADD",
+      data: newAnecdote,
+    });
+  };
+};
+
+export const initAction = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAll();
+    anecdotes.sort((a, b) =>
+      a.votes < b.votes ? 1 : b.votes < a.votes ? -1 : 0
+    );
+    dispatch({ type: "INIT_ANECDOTE", data: anecdotes });
+  };
 };
 export const filterAction = (filter) => {
   console.log("filterAction:", filter);

@@ -2,29 +2,21 @@ const notification = null;
 
 const initialState = notification;
 
-export const messageOnVote = (id) => {
-  return { type: "SET_NOTIFICATION", data: id };
-};
-
-export const close = () => {
-  return { type: "CLOSE_NOTIFICATION" };
-};
-
-export const messageNewAnecdote = (anecdote) => {
-  return { type: "NEW_ANECDOTE", data: anecdote };
+export const message = (content, timer) => {
+  return async (dispatch) => {
+    dispatch({ type: "SET_NOTIFICATION", data: content });
+    setTimeout(() => {
+      dispatch({ type: "CLOSE_NOTIFICATION" });
+    }, timer * 1000);
+  };
 };
 
 const notificationReducer = (state = initialState, action) => {
   let msg = "";
   switch (action.type) {
     case "SET_NOTIFICATION":
-      msg = `You voted ${action.data}`;
+      msg = `${action.data}`;
       return msg;
-    case "NEW_ANECDOTE":
-      msg = `Anecdote created: ${action.data}`;
-      return msg;
-    case "CLOSE_NOTIFICATION":
-      return initialState;
     default:
       return state;
   }
