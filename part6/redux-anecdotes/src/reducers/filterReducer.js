@@ -9,8 +9,8 @@ export const filterWith = (value) => {
 const filterReducer = (state = initialState, action) => {
   switch (action.type) {
     case "GET_FILTER":
-      let msg = action.data || null;
-      return msg;
+      let value = action.data;
+      return value;
     default:
       return state;
   }

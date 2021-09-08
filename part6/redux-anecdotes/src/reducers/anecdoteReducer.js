@@ -49,10 +49,6 @@ export const initAction = () => {
     dispatch({ type: "INIT_ANECDOTE", data: anecdotes });
   };
 };
-export const filterAction = (filter) => {
-  console.log("filterAction:", filter);
-  return { type: "FILTER", data: filter };
-};
 
 const reducer = (state = [], action) => {
   console.log("state now: ", state);
@@ -75,13 +71,6 @@ const reducer = (state = [], action) => {
       const anecdote = action.data;
       return state.concat(anecdote);
     }
-    case "FILTER":
-      return action.data === null
-        ? []
-        : state.filter(
-            (el) =>
-              el.content.toLowerCase().indexOf(action.data.toLowerCase()) !== -1
-          );
     case "INIT_ANECDOTE":
       return action.data;
     default:

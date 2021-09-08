@@ -7,7 +7,7 @@ import filterReducer from "./reducers/filterReducer";
 
 const combReducer = combineReducers({
   anecdoteReducer: reducer,
-  notReducer: notificationReducer,
+  notification: notificationReducer,
   filter: filterReducer,
 });
 export const store = createStore(
