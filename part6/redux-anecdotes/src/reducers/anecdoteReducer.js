@@ -24,6 +24,11 @@ export const addAction = (anecdote) => {
   };
 };
 
+export const filterAction = (filter) => {
+  console.log("filterAction:", filter);
+  return { type: "FILTER", data: filter };
+};
+
 const asObject = (anecdote) => {
   return {
     content: anecdote,
@@ -55,6 +60,14 @@ const reducer = (state = initialState, action) => {
       const anecdote = action.data;
       return state.concat(anecdote);
     }
+    case "FILTER":
+      return action.data === null
+        ? initialState
+        : state.filter(
+            (el) =>
+              el.content.toLowerCase().indexOf(action.data.toLowerCase()) !== -1
+          );
+
     default:
       return state;
   }
