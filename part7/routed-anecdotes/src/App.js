@@ -8,7 +8,7 @@ import {
   useParams,
 } from "react-router-dom";
 
-const Menu = () => {
+const Menu = (props) => {
   const padding = {
     paddingRight: 5,
   };
@@ -29,6 +29,7 @@ const Menu = () => {
           about
         </a>
       </Link>
+      {props.notification ? <p>{props.notification} </p> : null}
     </div>
   );
 };
@@ -96,6 +97,7 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+    props.setNotification(`A new anecdote ${content} created`);
     history.push("/");
   };
 
@@ -191,7 +193,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Router>
-        <Menu />
+        <Menu notification={notification} />
         <Switch>
           <Route exact path="/anecdote/:id">
             <Anecdote anecdotes={anecdotes} />
@@ -203,7 +205,7 @@ const App = () => {
             <About />
           </Route>
           <Route path="/create">
-            <CreateNew addNew={addNew} />
+            <CreateNew addNew={addNew} setNotification={setNotification} />
           </Route>
         </Switch>
       </Router>
