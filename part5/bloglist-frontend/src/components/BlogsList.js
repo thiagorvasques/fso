@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Blog from "./Blog";
 import "./styles/blog.css";
-import blogService from "../services/blogService";
+import {useSelector} from "react-redux"
 
-function BlogsList({ blogs, updateLike, deleteBlog, user, setBlogs }) {
-  useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      console.log(blogs);
-      setBlogs(
-        blogs.sort((a, b) =>
-          a.likes > b.likes ? -1 : b.likes > a.likes ? 1 : 0
-        )
-      );
-    });
-  }, []);
+
+function BlogsList() {
+
+  const blogs = useSelector(state => state.blogs);
+  console.log("Sorted List" , blogs);
+
   return (
     <div>
       <div>
@@ -26,10 +21,11 @@ function BlogsList({ blogs, updateLike, deleteBlog, user, setBlogs }) {
             <Blog
               key={blog.id}
               blog={blog}
-              index={index}
-              updateLike={updateLike}
-              deleteBlog={deleteBlog}
-              user={user}
+              blogs={blogs}
+              // index={index}
+              // updateLike={updateLike}
+              // deleteBlog={deleteBlog}
+              // user={user}
             />
           );
         })}

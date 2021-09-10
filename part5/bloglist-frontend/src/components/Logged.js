@@ -1,11 +1,15 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutAction } from "../reducers/loginReducer";
 
-function Blog({ user, logout }) {
+function Blog() {
+  const login = useSelector((state) => state.login);
+  const dispatch = useDispatch();
   return (
     <div>
       <h1>Blogs</h1>
-      <p>{user.name} logged in</p>
-      <button type="button" onClick={() => logout()}>
+      <p>{login.username} logged in</p>
+      <button type="button" onClick={() => dispatch(logoutAction())}>
         Logout
       </button>
     </div>

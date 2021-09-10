@@ -1,8 +1,14 @@
 import React from "react";
 import "./styles/blog.css";
 import Togglable from "./Toggable";
+import { useDispatch, useSelector } from "react-redux";
+import { likeAction, deleteBlog } from "../reducers/blogListReducer";
 
-function Blog({ blog, updateLike, deleteBlog, user }) {
+function Blog({ blog, blogs }) {
+  const dispatch = useDispatch();
+  const login = useSelector((state) => state.login);
+
+  console.log(login.username);
   return (
     <li className="blog">
       <div className="d-flex flex-column">
@@ -12,24 +18,12 @@ function Blog({ blog, updateLike, deleteBlog, user }) {
           <Togglable buttonLabel={"View"}>
             <p>{blog.url}</p>
             <p id="likes">{blog.likes}</p>
-            <button
-              onClick={(e) =>
-                updateLike(
-                  e,
-                  blog.title,
-                  blog.author,
-                  blog.url,
-                  blog.likes,
-                  blog.id
-                )
-              }
-            >
+            <button onClick={(e) => dispatch(likeAction(blog, blogs))}>
               Like
             </button>
-            {blog.user !== undefined && blog.user.username === user.username ? (
-              <button
-                onClick={(e) => deleteBlog(e, blog.id, blog.title, blog.author)}
-              >
+            {blog.user !== undefined &&
+            blog.user.username === login.username ? (
+              <button onClick={(e) => dispatch(deleteBlog(blog, blogs))}>
                 Delete
               </button>
             ) : null}
