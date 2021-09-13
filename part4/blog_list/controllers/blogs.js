@@ -1,7 +1,6 @@
 const blogRoutes = require("express").Router();
+
 const Blog = require("../models/blog");
-const User = require("../models/user");
-const jwt = require("jsonwebtoken");
 
 // const getTokenFrom = (request) => {
 //   const authorization = request.get("authorization");
@@ -21,7 +20,13 @@ blogRoutes.post("/", async (request, response) => {
   const body = request.body;
   const user = request.user;
 
-  if (body.title === undefined || body.url === undefined) {
+  if (
+    body.title === undefined ||
+    body.url === undefined ||
+    body.title === "" ||
+    body.author === "" ||
+    body.url === ""
+  ) {
     return response.status(400).json({ error: "Content missing" });
   } else if (body.likes === undefined) {
     body.likes = 0;
@@ -83,6 +88,28 @@ blogRoutes.put("/:id", async (request, response) => {
     new: true,
   });
   response.json(updated);
+});
+
+blogRoutes.post("/:id/comments", async (request, response) => {
+  const body = request.body;
+  console.log("Request.body", body);
+  if (body.comment === "") {
+    response.status(400).json({ error: "content missing" });
+  } else {
+    const blog = await Blog.findById(request.params.id);
+    console.log("blog returned by findbyid", blog.toJSON());
+    const toSave = new Blog({
+      _id: request.params.id,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.like,
+      user: blog.user,
+      comments: blog.comments.concat(body.comment),
+    });
+    const saved = await Blog.findByIdAndUpdate(request.params.id, toSave);
+    response.status(204).json(saved);
+  }
 });
 
 module.exports = blogRoutes;
