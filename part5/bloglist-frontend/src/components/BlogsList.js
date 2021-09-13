@@ -1,35 +1,22 @@
 import React from "react";
-import Blog from "./Blog";
-import "./styles/blog.css";
-import {useSelector} from "react-redux"
 
+import "./styles/blog.css";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 function BlogsList() {
-
-  const blogs = useSelector(state => state.blogs);
-  console.log("Sorted List" , blogs);
+  const blogs = useSelector((state) => state.blogs);
+  console.log("Sorted List", blogs);
 
   return (
     <div>
-      <div>
-        <button>All Blogs</button>
-        <button>My blogs</button>
-      </div>
-      <ul>
-        {blogs.map((blog, index) => {
-          return (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              blogs={blogs}
-              // index={index}
-              // updateLike={updateLike}
-              // deleteBlog={deleteBlog}
-              // user={user}
-            />
-          );
-        })}
-      </ul>
+      {blogs.map((blog, index) => {
+        return (
+          <div className="blog" key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </div>
+        );
+      })}
     </div>
   );
 }

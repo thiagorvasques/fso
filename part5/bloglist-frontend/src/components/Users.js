@@ -1,11 +1,10 @@
 import React from "react";
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { getUsers } from "../reducers/userReducers";
+import { useSelector } from "react-redux";
+
+import { Link } from "react-router-dom";
 
 function Users() {
   const users = useSelector((state) => state.users);
-  console.log("should be list of users", users);
 
   return (
     <div>
@@ -19,8 +18,10 @@ function Users() {
         <tbody>
           {users.map((user) => {
             return (
-              <tr>
-                <td>{user.name}</td>
+              <tr key={user.id}>
+                <td>
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
+                </td>
                 <td>{user.blogs.length}</td>
               </tr>
             );

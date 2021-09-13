@@ -45,4 +45,25 @@ const deleteBlog = async (id) => {
   return response.data;
 };
 
-export default { getAll, setToken, createBlog, updateLike, deleteBlog };
+const createComment = async (id, comment) => {
+  console.log("Service id", id, "service comment", comment);
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.post(
+    `${baseUrl}/${id}/comments`,
+    comment,
+    config
+  );
+  return response.data;
+};
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default {
+  getAll,
+  setToken,
+  createBlog,
+  updateLike,
+  deleteBlog,
+  createComment,
+};

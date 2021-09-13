@@ -58,6 +58,26 @@ export const deleteBlog = (blog, blogs) => {
   };
 };
 
+export const createComment = (e, id, comment, blog, blogs) => {
+  console.log(e, id, comment, blog);
+  return async (dispatch) => {
+    e.preventDefault();
+    try {
+      await blogService.createComment(id, comment);
+      const commented = {
+        ...blog,
+        comments: blog.comments.concat(comment.comment),
+      };
+      console.log(commented);
+      const updated = blogs.map((item) => (item.id === id ? commented : item));
+      console.log(updated);
+      dispatch({ type: "CREATE_COMMENT", data: updated });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
 const blogListReducer = (state = initalState, action) => {
   switch (action.type) {
     case "GET_ALL":
@@ -67,6 +87,8 @@ const blogListReducer = (state = initalState, action) => {
     case "UPDATE_LIKE":
       return action.data;
     case "DELETE":
+      return action.data;
+    case "CREATE_COMMENT":
       return action.data;
     default:
       return state;
