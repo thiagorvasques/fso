@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { Button } from "react-bootstrap";
 
 const Togglable = (props) => {
   const [visible, setVisible] = useState(false);
@@ -6,20 +7,30 @@ const Togglable = (props) => {
   const hideWhenVisible = { display: visible ? "none" : "" };
   const showWhenVisible = { display: visible ? "" : "none" };
 
+  console.log(props.toggle);
   const toggleVisibility = () => {
     setVisible(!visible);
   };
 
   return (
-    <div>
+    <div className="container ">
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility} id="new">
+        <Button variant="primary" onClick={toggleVisibility} id="new">
           {props.buttonLabel}
-        </button>
+        </Button>
       </div>
       <div style={showWhenVisible} className="togglableContent">
-        {props.children}
-        <button onClick={toggleVisibility}>Hide</button>
+        <div className="d-flex flex-column">
+          {props.children}
+
+          <Button
+            variant="primary"
+            onClick={toggleVisibility}
+            className="position-absolute"
+          >
+            Hide
+          </Button>
+        </div>
       </div>
     </div>
   );

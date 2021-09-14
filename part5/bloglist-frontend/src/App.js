@@ -12,7 +12,7 @@ import Users from "./components/Users";
 import { getUsers } from "./reducers/userReducers";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import User from "./components/User";
-import Nav from "./components/Nav";
+import NavBar from "./components/Nav";
 const App = () => {
   const dispatch = useDispatch();
   //redux states
@@ -43,7 +43,7 @@ const App = () => {
           </div>
         ) : (
           <div>
-            <Nav />
+            <NavBar />
             <Switch>
               <Route exact path="/">
                 <Notification message={message} />

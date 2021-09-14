@@ -1,4 +1,5 @@
 import React from "react";
+import { Card, ListGroup, ListGroupItem } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
@@ -12,17 +13,23 @@ function User() {
   return (
     <div>
       {list.length > 0 ? (
-        <div>
-          <h1>{list[0].user.name}</h1>
-          <h3>Added Blogs </h3>
-          <ul>
-            {list.map((item) => {
-              return <li key={item.id}>{item.title}</li>;
-            })}
-          </ul>
-        </div>
+        <Card>
+          <Card.Header>{list[0].user.name}</Card.Header>
+          <Card.Title className="m-3">Added Blogs</Card.Title>
+          <Card.Body>
+            <ListGroup>
+              {list.map((item) => {
+                return (
+                  <ListGroupItem key={item.id}>{item.title}</ListGroupItem>
+                );
+              })}
+            </ListGroup>
+          </Card.Body>
+        </Card>
       ) : (
-        <h1> No blogs from this user</h1>
+        <Card>
+          <Card.Header> No blogs from this user</Card.Header>
+        </Card>
       )}
     </div>
   );

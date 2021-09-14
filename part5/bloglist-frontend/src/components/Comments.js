@@ -2,7 +2,15 @@ import React from "react";
 import { useField } from "../hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { createComment } from "../reducers/blogListReducer";
-
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  ListGroup,
+  ListGroupItem,
+} from "react-bootstrap";
 function Comments({ blog }) {
   const comment = useField("text");
   console.log("this is the comment", comment);
@@ -13,19 +21,35 @@ function Comments({ blog }) {
   };
   return (
     <div>
-      <form
-        onSubmit={(e) =>
-          dispatch(createComment(e, blog.id, commentObj, blog, blogs))
-        }
-      >
-        <input {...comment} />
-        <button type="submit">Add Comment</button>
-      </form>
-      <ul>
+      <Container>
+        <Form
+          onSubmit={(e) =>
+            dispatch(createComment(e, blog.id, commentObj, blog, blogs))
+          }
+        >
+          <Row className="mt-3">
+            <Col>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlTextarea1"
+              >
+                <Form.Control as="textarea" rows={1} {...comment} />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Button type="submit" className="position-relative">
+                Add Comment
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Container>
+
+      <ListGroup>
         {blog.comments.map((item, i) => {
-          return <li key={i}>{item}</li>;
+          return <ListGroupItem key={i}>{item}</ListGroupItem>;
         })}
-      </ul>
+      </ListGroup>
     </div>
   );
 }

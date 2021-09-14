@@ -1,5 +1,5 @@
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useField } from "../hooks";
 import { loginAction } from "../reducers/loginReducer";
@@ -15,30 +15,43 @@ function LoginForm(props) {
 
   return (
     <div>
-      <Form>
-        <h1> Login to application </h1>
+      <h1> Login to application </h1>
+      <Form onSubmit={(e) => dispatch(loginAction(e, user))}>
         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control type="email" placeholder="name@example.com" />
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            type="email"
+            placeholder="name@example.com"
+            {...username}
+          />
         </Form.Group>
-
-        </Form>
-        <h1>Log in to application</h1>
-
-        <form onSubmit={(e) => dispatch(loginAction(e, user))}>
-          <div>
-            username
-            <input {...username} />
-          </div>
-          <div>
-            password
-            <input {...password} />
-          </div>
-          <button type="submit" id="login-button">
-            login
-          </button>
-        </form>
+        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="email"
+            placeholder="name@example.com"
+            {...password}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
       </Form>
+      {/* <h1>Log in to application</h1>
+
+      <form onSubmit={(e) => dispatch(loginAction(e, user))}>
+        <div>
+          username
+          <input {...username} />
+        </div>
+        <div>
+          password
+          <input {...password} />
+        </div>
+        <button type="submit" id="login-button">
+          login
+        </button>
+      </form> */}
     </div>
   );
 }
