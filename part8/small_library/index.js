@@ -1,5 +1,24 @@
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer, UserInputError, gql } = require("apollo-server");
 const { v1: uuid } = require("uuid");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const Book = require("./models/bookModel");
+const Author = require("./models/authorModel");
+const User = require("./models/userModel");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("connected to MongoDb");
+  })
+  .catch((error) => {
+    console.log("error connecting to db", error);
+  });
 
 let authors = [
   {
@@ -99,12 +118,19 @@ const typeDefs = gql`
 
   type Book {
     title: String!
+    author: Author!
     published: Int!
-    author: String!
-    id: ID!
     genres: [String]
+    id: ID!
   }
-
+  type User {
+    username: String!
+    password: String!
+    favoriteGenre: String
+  }
+  type token {
+    value: String!
+  }
   type Query {
     authorsCount: Int!
     allAuthors: [Author!]!
@@ -113,7 +139,7 @@ const typeDefs = gql`
     allBooks: [Book!]!
     findBook(title: String!): Book
     findBooksByAuthor(author: String, genre: String): [Book]
-    findBookByGenre(genre: String): [Book]
+    me: User
   }
   type Mutation {
     addBook(
@@ -122,68 +148,158 @@ const typeDefs = gql`
       published: Int!
       genres: [String]
     ): Book
-    editAuthor(name: String!, setBornTo: Int!): Author
+  }
+
+  type Mutation {
+    editAuthor(name: String!, year: Int!): Author
+  }
+  type Mutation {
+    addAuthor(name: String!, born: Int): Author
+  }
+  type Mutation {
+    createUser(username: String!, password: String!): User
+    login(username: String!, password: String!): token
   }
 `;
 
 const resolvers = {
   Query: {
-    authorsCount: () => authors.length,
-    allAuthors: () => authors,
-    findAuthor: (root, args) =>
-      authors.find((author) => author.name === args.name),
-    booksCount: () => books.length,
-    allBooks: () => books,
-    findBook: (root, args) => books.find((b) => b.title === args.title),
-    findBooksByAuthor: (root, args) =>
-      books.filter((book) => {
-        if (args.author && args.genre) {
-          return (
-            book.author === args.author && book.genres.includes(args.genre)
-          );
-        } else if (args.author) {
-          return book.author === args.author;
-        } else {
-          return book.genres.includes(args.genre);
-        }
-      }),
-    findBookByGenre: (root, args) =>
-      books.filter((b) => b.genres.includes(args.genre)),
-  },
-  Author: {
-    bookCount: (root) =>
-      books.filter((book) => book.author === root.name).length,
-  },
-  Mutation: {
-    addBook: (root, args) => {
-      console.log(args, "addbook function called");
-      const book = { ...args, id: uuid() };
-      if (!authors.some((author) => author.name.includes(book.author))) {
-        authors = authors.concat({ name: book.author, id: uuid() });
-        console.log(authors);
+    authorsCount: () => Author.collection.countDocuments(),
+    allAuthors: () => Author.find({}),
+    findAuthor: (root, args) => Author.findOne({ name: args.name }),
+    booksCount: () => Book.collection.countDocuments(),
+    allBooks: () => Book.find({}),
+    findBook: (root, args) => Book.findOne({ title: args.title }),
+    findBooksByAuthor: (root, args) => {
+      if (args.author && args.genre) {
+        return Book.find({ name: args.title, genres: args.genre });
+      } else if (args.author) {
+        return Book.find({ title: args.title });
+      } else {
+        return Book.find({ genres: args.genre });
       }
-      books = books.concat(book);
-      //console.log(books);
-      return book;
+    },
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
+  },
+
+  Author: {
+    bookCount: (root) => Book.find({}).length,
+  },
+
+  Mutation: {
+    addBook: async (root, args, context) => {
+      //Check if author already exist
+
+      if (!context.currentUser) {
+        console.log("unauthorized");
+        return null;
+      }
+      const authorExist = await Author.findOne({ name: args.author });
+      if (authorExist) {
+        console.log("exists");
+      } else {
+        console.log("does not exist");
+      }
+
+      let book;
+      if (authorExist) {
+        //new Book object model
+        console.log(authorExist);
+        book = new Book({ ...args, author: authorExist._id });
+
+        try {
+          // save new book obect
+          const saved = await book.save();
+          return saved;
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        // author does not exist
+        const author = new Author({ name: args.author });
+        console.log("new author Object", author);
+        try {
+          //save new author
+          const saved = await author.save();
+          book = new Book({ ...args, author: saved._id });
+          try {
+            //save new book with new author id
+            const saved = await book.save();
+            return saved;
+          } catch (error) {
+            console.log(error);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
     },
     editAuthor: (root, args) => {
       if (authors.some((author) => author.name.includes(args.name))) {
         authors = authors.map((author) =>
-          author.name === args.name
-            ? { ...author, born: args.setBornTo }
-            : author
+          author.name === args.name ? { ...author, born: args.year } : author
         );
         return authors.find((author) => author.name === args.name);
       } else {
         return null;
       }
     },
+    addAuthor: (root, args) => {
+      let author = new Author({ ...args });
+      const saved = author.save();
+      console.log(saved);
+      return saved;
+    },
+    createUser: async (root, args) => {
+      const saltRounds = 10;
+      const hash = await bcrypt.hash(args.password, saltRounds);
+      const user = new User({
+        username: args.username,
+        password: hash,
+      });
+      try {
+        return await user.save();
+      } catch (error) {
+        throw new UserInputError(error.message, { invalidargs: args });
+      }
+    },
+
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+      console.log("user find()", user);
+      const passwordCorrect =
+        user === null
+          ? false
+          : await bcrypt.compare(args.password, user.password);
+      console.log("check password correctness", passwordCorrect);
+      if (!(user && passwordCorrect)) {
+        throw new UserInputError(error.message, { invalidargs: args });
+      }
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+      console.log("user for token", userForToken);
+      const token = jwt.sign(userForToken, process.env.SECRET);
+      return { value: token };
+    },
+    //
   },
 };
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+    const auth = req ? req.headers.authorization : null;
+    if (auth && auth.toLocaleLowerCase().startsWith("bearer ")) {
+      const decodedToken = jwt.verify(auth.substring(7), process.env.SECRET);
+      const currentUser = await User.findById(decodedToken.id);
+      return { currentUser };
+    }
+  },
 });
 
 server.listen().then(({ url }) => {
