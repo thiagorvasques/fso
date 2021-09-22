@@ -14,7 +14,7 @@ const Authors = (props) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>Name</th>
             <th>born</th>
             <th>books</th>
           </tr>
@@ -27,7 +27,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <BithYear authors={authors}/>
+      {props.token ? <BithYear authors={authors} /> : null}
     </div>
   );
 };
