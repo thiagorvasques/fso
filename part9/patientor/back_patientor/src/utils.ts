@@ -1,5 +1,5 @@
 
-import { patientToadd, Gender} from "./types";
+import { patientToadd, Gender } from "./types";
 
 
 const isString = (text: unknown): text is string => {
@@ -10,6 +10,9 @@ const isString = (text: unknown): text is string => {
 const isGender = (entry: any): entry is Gender => {
     return Object.values(Gender).includes(entry);
 };
+
+
+
 const parseString = (entry: unknown): string => {
     if(!entry || !isString(entry)){
         throw new Error('Incorrect or missing content');
@@ -24,6 +27,7 @@ const parseGender = (entry: unknown): Gender => {
 };
 
 
+
 type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown, gender: unknown, occupation: unknown};
 
 const toPatient = ({name,  dateOfBirth, ssn, gender, occupation}: Fields): patientToadd => {
@@ -33,7 +37,8 @@ const toPatient = ({name,  dateOfBirth, ssn, gender, occupation}: Fields): patie
             dateOfBirth: parseString(dateOfBirth),
             ssn: parseString(ssn),
             gender: parseGender(gender),
-            occupation: parseString(occupation)
+            occupation: parseString(occupation),
+
     };
 
     return newPatient;

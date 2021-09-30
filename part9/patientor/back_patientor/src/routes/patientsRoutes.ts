@@ -23,4 +23,11 @@ patientsRoute.post('/', (req, res) => {
     }
 });
 
+patientsRoute.get('/:id', (req, res) => {
+    const id: string = req.params.id;
+    const patient = patientsService.getPatientById(id);
+    patient ? res.json({...patient }) : res.status(400).json({error: "patient not found"});
+});
+
+
 export default patientsRoute;
